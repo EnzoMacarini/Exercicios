@@ -1,0 +1,43 @@
+# EXERCICIO CAIXA ELETRONICO
+
+
+print("===== CAIXA ELETRÔNICO =====")
+
+titular = input("Digite o nome do titular da conta: ")
+saldo = 0
+
+while True:
+    print("\n1 - Depositar")
+    print("2 - Sacar")
+    print("3 - Consultar Saldo")
+    print("4 - Sair")
+
+    opcao = input("Escolha uma opção: ")
+
+    if opcao == "1":
+        valor = float(input("Digite o valor para depósito: "))
+        if valor > 0:
+            saldo += valor
+            print(f"Depósito de R$ {valor:.2f} realizado com sucesso.")
+        else:
+            print("Valor inválido para depósito.")
+
+    elif opcao == "2":
+        valor = float(input("Digite o valor para saque: "))
+        if valor <= 0:
+            print("Valor inválido para saque.")
+        elif valor > saldo:
+            print("Saldo insuficiente.")
+        else:
+            saldo -= valor
+            print(f"Saque de R$ {valor:.2f} realizado com sucesso.")
+
+    elif opcao == "3":
+        print(f"Saldo atual de {titular}: R$ {saldo:.2f}")
+
+    elif opcao == "4":
+        print("Encerrando o sistema. Obrigado!")
+        break
+
+    else:
+        print("Opção inválida. Tente novamente.")
