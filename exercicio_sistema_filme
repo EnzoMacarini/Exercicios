@@ -1,0 +1,68 @@
+print("=== SISTEMA ESPECIALISTA DE RECOMENDAÇÃO DE FILMES ===")
+
+# Base de Conhecimento
+filmes = [
+    {"nome": "Oppenheimer", "genero": "drama", "duracao": 180, "avaliacao": 8.6},
+    {"nome": "Batman: O Cavaleiro das Trevas", "genero": "acao", "duracao": 152, "avaliacao": 9.0},
+    {"nome": "Gladiador", "genero": "acao", "duracao": 155, "avaliacao": 8.5},
+    {"nome": "Intocáveis", "genero": "drama", "duracao": 112, "avaliacao": 8.5},
+    {"nome": "Até o Último Homem", "genero": "drama", "duracao": 139, "avaliacao": 8.1}
+]
+
+# Coleta de fatos
+genero_usuario = input("Digite o gênero desejado (acao ou drama): ").lower()
+duracao_max = int(input("Qual a duração máxima desejada (em minutos)? "))
+avaliacao_min = float(input("Qual a avaliação mínima desejada (0 a 10)? "))
+
+print("\n=== RECOMENDAÇÕES ===")
+
+encontrado = False
+
+# Motor de inferência
+for filme in filmes:
+    
+    regra_genero = filme["genero"] == genero_usuario
+    regra_duracao = filme["duracao"] <= duracao_max
+    regra_avaliacao = filme["avaliacao"] >= avaliacao_min
+
+    if regra_genero and regra_duracao and regra_avaliacao:
+        print(f"\nFilme recomendado: {filme['nome']}")
+        print(f"Gênero: {filme['genero']}")
+        print(f"Duração: {filme['duracao']} min")
+        print(f"Avaliação: {filme['avaliacao']}")
+        encontrado = True
+
+if not encontrado:
+    print("Nenhum filme encontrado com esses critérios.")
+
+
+# EXPLICAÇAO DO SISTEMA 
+
+Explicação das Regras
+
+O sistema utiliza regras de produção, no formato:
+SE (condição1) E (condição2) E (condição3)
+ENTÃO recomendar filme
+
+ Regra 1 — Gênero
+SE filme.genero == genero_usuario
+O filme deve pertencer exatamente ao gênero informado.
+Essa regra garante aderência ao interesse principal do usuário.
+
+ Regra 2 — Duração
+SE filme.duracao <= duracao_max
+O filme não pode ultrapassar o tempo máximo que o usuário deseja assistir.
+Útil para restrição de tempo disponível.
+
+ Regra 3 — Avaliação
+SE filme.avaliacao >= avaliacao_min
+Apenas filmes com qualidade mínima aceitável são recomendados.
+Atua como filtro de relevância.
+
+ Como o Sistema Funciona (Arquitetura)
+
+Um sistema especialista clássico possui:
+Base de Conhecimento - Lista de filmes (dados estruturados).
+Base de Fatos - Entradas do usuário.
+Motor de Inferência - Laço for + regras if.
+Conclusão - Recomendação ou ausência de resultado.
