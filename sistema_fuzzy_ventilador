@@ -1,0 +1,86 @@
+# Importa a biblioteca numpy para lidar com arrays e criar os intervalos numericos das variaveis
+import numpy as np
+
+# Importa a biblioteca skfuzzy que contem as funcoes matematicas de logica fuzzy
+import skfuzzy as fuzz
+
+# Importa o modulo control do skfuzzy especificamente para construir sistemas de controle de regras
+from skfuzzy import control as ctrl
+
+# Importa a biblioteca matplotlib.pyplot para gerar e exibir graficos visuais na tela
+import matplotlib.pyplot as plt
+
+# Cria a variavel de entrada temperatura definindo o universo de 0 a 40 graus com saltos de 1
+temperatura = ctrl.Antecedent(np.arange(0, 41, 1), 'temperatura')
+
+# Cria a variavel de entrada umidade definindo o universo de 0 a 100 por cento com saltos de 1
+umidade = ctrl.Antecedent(np.arange(0, 101, 1), 'umidade')
+
+# Cria a variavel de saida velocidade do ventilador definindo o universo de 0 a 100 por cento com saltos de 1
+velocidade = ctrl.Consequent(np.arange(0, 101, 1), 'velocidade')
+
+# Define a funcao de pertinencia baixa para temperatura como um triangulo com pontos em 0, 0 e 20
+temperatura['baixa'] = fuzz.trimf(temperatura.universe, [0, 0, 20])
+
+# Define a funcao de pertinencia media para temperatura como um triangulo com pontos em 15, 25 e 35
+temperatura['media'] = fuzz.trimf(temperatura.universe, [15, 25, 35])
+
+# Define a funcao de pertinencia alta para temperatura como um triangulo com pontos em 30, 40 e 40
+temperatura['alta'] = fuzz.trimf(temperatura.universe, [30, 40, 40])
+
+# Define a funcao de pertinencia baixa para umidade como um triangulo com pontos em 0, 0 e 40
+umidade['baixa'] = fuzz.trimf(umidade.universe, [0, 0, 40])
+
+# Define a funcao de pertinencia media para umidade como um triangulo com pontos em 30, 50 e 70
+umidade['media'] = fuzz.trimf(umidade.universe, [30, 50, 70])
+
+# Define a funcao de pertinencia alta para umidade como um triangulo com pontos em 60, 100 e 100
+umidade['alta'] = fuzz.trimf(umidade.universe, [60, 100, 100])
+
+# Define a funcao de pertinencia baixa para velocidade como um triangulo com pontos em 0, 0 e 40
+velocidade['baixa'] = fuzz.trimf(velocidade.universe, [0, 0, 40])
+
+# Define a funcao de pertinencia media para velocidade como um triangulo com pontos em 30, 50 e 70
+velocidade['media'] = fuzz.trimf(velocidade.universe, [30, 50, 70])
+
+# Define a funcao de pertinencia alta para velocidade como um triangulo com pontos em 60, 100 e 100
+velocidade['alta'] = fuzz.trimf(velocidade.universe, [60, 100, 100])
+
+# Cria a primeira regra afirmando que se temperatura for baixa e umidade for baixa a velocidade sera baixa
+regra1 = ctrl.Rule(temperatura['baixa'] & umidade['baixa'], velocidade['baixa'])
+
+# Cria a segunda regra afirmando que se temperatura for media e umidade for media a velocidade sera media
+regra2 = ctrl.Rule(temperatura['media'] & umidade['media'], velocidade['media'])
+
+# Cria a terceira regra afirmando que se temperatura for alta ou a umidade for alta a velocidade sera alta
+regra3 = ctrl.Rule(temperatura['alta'] | umidade['alta'], velocidade['alta'])
+
+# Agrupa todas as regras criadas e inicializa o sistema de controle fuzzy
+sistema_controle = ctrl.ControlSystem([regra1, regra2, regra3])
+
+# Cria uma simulacao do sistema de controle para permitir a insercao de valores reais para teste
+simulador = ctrl.ControlSystemSimulation(sistema_controle)
+
+# Atribui o valor de teste 35 para a entrada de temperatura no simulador
+simulador.input['temperatura'] = 35
+
+# Atribui o valor de teste 80 para a entrada de umidade no simulador
+simulador.input['umidade'] = 80
+
+# Pede para o simulador computar e processar a inferencia e a defuzzificacao com base nas regras
+simulador.compute()
+
+# Exibe no console a velocidade exata final calculada formatada com duas casas decimais
+print(f"Velocidade recomendada para o ventilador: {simulador.output['velocidade']:.2f}%")
+
+# Monta o grafico das funcoes de pertinencia da variavel de temperatura
+temperatura.view()
+
+# Monta o grafico das funcoes de pertinencia da variavel de umidade
+umidade.view()
+
+# Monta o grafico da variavel de velocidade e preenche a area calculada mostrando o resultado da simulacao
+velocidade.view(sim=simulador)
+
+# Abre uma janela exibindo todos os graficos que foram montados anteriormente
+plt.show()
